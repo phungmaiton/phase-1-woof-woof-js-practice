@@ -79,10 +79,9 @@ filterButton.addEventListener('click', () => {
         dogBar.innerHTML= "";
         fetch('http://localhost:3000/pups') 
             .then(resp => resp.json())
-            .then(dogObject => {
-                const badDogs = dogObject.filter(dog => dog.isGoodDog === false);
-                badDogs.forEach(badDog => renderDogs(badDog));
+            .then(dogObject => {dogObject.forEach(dog => renderDogs(dog))
             })
+
     }
 
 })
