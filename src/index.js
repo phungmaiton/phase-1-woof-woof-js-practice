@@ -8,13 +8,6 @@ dogInfo.append(dogImage, dogH2, button);
 
 const filterButton = document.querySelector('#good-dog-filter');
 
-// function hideEmptyButton(button) {
-//     if (button.textContent= "") {
-//         button.style.display = 'none';
-//     }
-// }
-
-// hideEmptyButton(button);
 
 fetch('http://localhost:3000/pups') 
     .then(resp => resp.json())
@@ -30,8 +23,11 @@ const renderDogs = (dog) => {
     dogBar.appendChild(dogName);
     dogName.id = dog.id;
     isGoodDog = dog.isGoodDog;
-
+    if (button.textContent == "") {
+        button.style.visibility = 'hidden';
+    }
     dogName.addEventListener('click', () => {
+        button.style.visibility = 'visible';
         dogImage.src = dog.image;
         dogH2.textContent = dog.name;
         function isGoodDog (button) {
@@ -65,24 +61,30 @@ const renderDogs = (dog) => {
                     .then(resp => resp.json())
             })
         })
-
-        filterButton.addEventListener('click', () => {
-            if (filterButton.textContent === "Filter good dogs: OFF") {
-                filterButton.textContent = "Filter good dogs: ON";
-                dogBar.innerHTML= "";
-                goodDogs.forEach(goodDog => {
-                    dogName.textContent = goodDog.name;
-                    dogBar.appendChild(dogName);
-                })
-            } else if (filterButton.textContent === "Filter good dogs: ON") {
-                filterButton.textContent = "Filter good dogs: OFF"
-                dogBar.innerHTML= "";
-                renderDogs(dog);
-            }
-            
-            
-        
-        })
 }
+
+filterButton.addEventListener('click', () => {
+    if (filterButton.textContent === "Filter good dogs: OFF") {
+        filterButton.textContent = "Filter good dogs: ON";
+        dogBar.innerHTML = "";
+        fetch('http://localhost:3000/pups') 
+            .then(resp => resp.json())
+            .then(dogObject => {
+                const goodDogs = dogObject.filter(dog => dog.isGoodDog === true);
+                goodDogs.forEach(goodDog => renderDogs(goodDog));
+            })
+            
+    } else if (filterButton.textContent === "Filter good dogs: ON") {
+        filterButton.textContent = "Filter good dogs: OFF"
+        dogBar.innerHTML= "";
+        fetch('http://localhost:3000/pups') 
+            .then(resp => resp.json())
+            .then(dogObject => {
+                const badDogs = dogObject.filter(dog => dog.isGoodDog === false);
+                badDogs.forEach(badDog => renderDogs(badDog));
+            })
+    }
+
+})
 
 
